@@ -30,21 +30,26 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="p-3 border rounded-md">
             <h3 class="font-semibold">Run Threshold</h3>
-            <p>{{ user.run_threshold // 60 }} minutes</p>
+            <p>{{ user.run_threshold }} minutes</p>
         </div>
         <div class="p-3 border rounded-md">
             <h3 class="font-semibold">Ride Threshold</h3>
-            <p>{{ user.ride_threshold // 60 }} minutes</p>
+            <p>{{ user.ride_threshold }} minutes</p>
         </div>
         <div class="p-3 border rounded-md">
             <h3 class="font-semibold">Walk Threshold</h3>
-            <p>{{ user.walk_threshold // 60 }} minutes</p>
+            <p>{{ user.walk_threshold }} minutes</p>
         </div>
     </div>
-    <div class="mt-4">
+    <div class="mt-4 flex space-x-3">
         <a href="{{ url_for('user.settings') }}" class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md transition">
             Adjust Settings
         </a>
+        <form action="{{ url_for('user.process_historic') }}" method="POST">
+            <button type="submit" class="inline-block bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md transition">
+                Process Historic Activities
+            </button>
+        </form>
     </div>
 </div>
 

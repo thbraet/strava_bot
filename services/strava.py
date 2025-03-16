@@ -7,6 +7,8 @@ from models.user import User
 def get_authorization_url():
     """Generate the Strava authorization URL"""
     redirect_uri = url_for('auth.callback', _external=True)
+    print("Strava client id: ", current_app.config['STRAVA_CLIENT_ID'])
+
     client_id = current_app.config['STRAVA_CLIENT_ID']
     
     auth_url = f"https://www.strava.com/oauth/authorize"
@@ -51,6 +53,41 @@ def get_activity(activity_id, access_token):
         
     return response.json()
 
+def get_activity_streams(activity_id, access_token, stream_types=None):
+    """Get activity streams (detailed data) from Strava"""
+    if stream_types is None:
+        stream_types = ['time', 'heartrate', 'velocity_smooth', 'altitude', 'cadence', 'watts', 'grade_smooth']
+    
+    response = requests.get(
+        f"https://www.strava.com/api/v3/activities/{activity_id}/streams",
+        headers={'Authorization': f'Bearer {access_token}'},
+        params={
+            'keys': ','.join(stream_types),
+            'key_by_type': True
+        }
+    )
+    
+    if response.status_code != 200:
+        return None
+        
+    return response.json()
+
+def get_athlete_activities(access_token, page=1, per_page=30):
+    """Get athlete activities from Strava"""
+    response = requests.get(
+        "https://www.strava.com/api/v3/athlete/activities",
+        headers={'Authorization': f'Bearer {access_token}'},
+        params={
+            'page': page,
+            'per_page': per_page
+        }
+    )
+    
+    if response.status_code != 200:
+        return None
+        
+    return response.json()
+
 def hide_activity_from_feed(activity_id, access_token):
     """Set the 'hide_from_home' flag to true for an activity"""
     url = f"https://www.strava.com/api/v3/activities/{activity_id}"
@@ -59,6 +96,18 @@ def hide_activity_from_feed(activity_id, access_token):
         url,
         headers={'Authorization': f'Bearer {access_token}'},
         json={'hide_from_home': True}
+    )
+    
+    return response.status_code == 200
+
+def update_activity_title(activity_id, access_token, title):
+    """Update the title of an activity"""
+    url = f"https://www.strava.com/api/v3/activities/{activity_id}"
+    
+    response = requests.put(
+        url,
+        headers={'Authorization': f'Bearer {access_token}'},
+        json={'name': title}
     )
     
     return response.status_code == 200

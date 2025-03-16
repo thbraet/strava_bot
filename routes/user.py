@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from . import user_bp
 from models import db
 from models.activity_log import ActivityLog
+from services.activity import process_historic_activities
 
 @user_bp.route('/dashboard')
 @login_required
@@ -43,3 +44,15 @@ def settings():
             flash('Please enter valid values for thresholds', 'danger')
         
     return render_template('settings.html', user=current_user)
+
+@user_bp.route('/process-historic-activities', methods=['POST'])
+@login_required
+def process_historic():
+    """Process all historic activities for the current user"""
+    try:
+        result = process_historic_activities(current_user)
+        flash(f"Processed {result['processed']} activities. {result['hidden']} were hidden from your feed.", 'success')
+    except Exception as e:
+        flash(f"Error processing activities: {str(e)}", 'danger')
+    
+    return redirect(url_for('user.dashboard'))

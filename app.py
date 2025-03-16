@@ -7,6 +7,8 @@ from config import config
 
 def create_app(config_name=None):
     """Application factory function"""
+    print("Config name: ", config_name)
+
     if config_name is None:
         config_name = os.environ.get('FLASK_CONFIG', 'default')
     
