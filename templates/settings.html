@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Settings | Strava Activity Filter{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-2xl font-bold mb-2">Activity Filter Settings</h1>
+    <p class="text-gray-600">Customize when activities should be hidden from your feed.</p>
+</div>
+
+<div class="bg-white rounded-lg shadow-md p-6">
+    <form method="POST" action="{{ url_for('user.settings') }}">
+        <div class="mb-6">
+            <h2 class="text-lg font-semibold mb-4">Activity Thresholds</h2>
+            <p class="text-gray-600 mb-4">Activities shorter than these thresholds will be automatically hidden from your feed while remaining public.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <label for="run_threshold" class="block text-gray-700 mb-2">Run Threshold (minutes)</label>
+                    <input type="number" id="run_threshold" name="run_threshold" value="{{ user.run_threshold // 60 }}" 
+                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500">
+                </div>
+                
+                <div>
+                    <label for="ride_threshold" class="block text-gray-700 mb-2">Ride Threshold (minutes)</label>
+                    <input type="number" id="ride_threshold" name="ride_threshold" value="{{ user.ride_threshold // 60 }}" 
+                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500">
+                </div>
+                
+                <div>
+                    <label for="walk_threshold" class="block text-gray-700 mb-2">Walk Threshold (minutes)</label>
+                    <input type="number" id="walk_threshold" name="walk_threshold" value="{{ user.walk_threshold // 60 }}" 
+                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500">
+                </div>
+            </div>
+        </div>
+        
+        <div class="border-t pt-6">
+            <button type="submit" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-6 rounded-md transition">
+                Save Settings
+            </button>
+            <a href="{{ url_for('user.dashboard') }}" class="ml-4 text-gray-600 hover:text-gray-800">
+                Cancel
+            </a>
+        </div>
+    </form>
+    
+    <div class="mt-10 pt-6 border-t">
+        <h2 class="text-lg font-semibold mb-4">Account Information</h2>
+        <div class="mb-4">
+            <p><strong>Strava Username:</strong> {{ user.username or 'Not available' }}</p>
+            <p><strong>Connected Since:</strong> {{ user.created_at.strftime('%Y-%m-%d') }}</p>
+        </div>
+        
+        <a href="{{ url_for('auth.logout') }}" class="text-red-600 hover:text-red-800">
+            Disconnect Account
+        </a>
+    </div>
+</div>
+{% endblock %}

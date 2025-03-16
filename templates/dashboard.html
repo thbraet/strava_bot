@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | Strava Activity Filter{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-2xl font-bold mb-2">Welcome, {{ user.username or 'Athlete' }}!</h1>
+    <p class="text-gray-600">Manage your activity filter settings and view stats.</p>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+    <div class="bg-white rounded-lg shadow-md p-4">
+        <h2 class="text-lg font-semibold mb-2 text-orange-600">Activities Processed</h2>
+        <p class="text-3xl font-bold">{{ total_processed }}</p>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-md p-4">
+        <h2 class="text-lg font-semibold mb-2 text-orange-600">Activities Hidden</h2>
+        <p class="text-3xl font-bold">{{ total_hidden }}</p>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-md p-4">
+        <h2 class="text-lg font-semibold mb-2 text-orange-600">Hidden Percentage</h2>
+        <p class="text-3xl font-bold">{{ "%.1f"|format(hide_percentage) }}%</p>
+    </div>
+</div>
+
+<div class="bg-white rounded-lg shadow-md p-6 mb-8">
+    <h2 class="text-xl font-semibold mb-4">Your Settings</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="p-3 border rounded-md">
+            <h3 class="font-semibold">Run Threshold</h3>
+            <p>{{ user.run_threshold // 60 }} minutes</p>
+        </div>
+        <div class="p-3 border rounded-md">
+            <h3 class="font-semibold">Ride Threshold</h3>
+            <p>{{ user.ride_threshold // 60 }} minutes</p>
+        </div>
+        <div class="p-3 border rounded-md">
+            <h3 class="font-semibold">Walk Threshold</h3>
+            <p>{{ user.walk_threshold // 60 }} minutes</p>
+        </div>
+    </div>
+    <div class="mt-4">
+        <a href="{{ url_for('user.settings') }}" class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md transition">
+            Adjust Settings
+        </a>
+    </div>
+</div>
+
+<div class="bg-white rounded-lg shadow-md p-6">
+    <h2 class="text-xl font-semibold mb-4">Recent Activity</h2>
+    {% if recent_logs %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full">
+                <thead>
+                    <tr class="bg-gray-50">
+                        <th class="py-2 px-3 text-left">Date</th>
+                        <th class="py-2 px-3 text-left">Activity</th>
+                        <th class="py-2 px-3 text-left">Type</th>
+                        <th class="py-2 px-3 text-left">Duration</th>
+                        <th class="py-2 px-3 text-left">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in recent_logs %}
+                    <tr class="border-t">
+                        <td class="py-2 px-3">{{ log.processed_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td class="py-2 px-3">{{ log.activity_name }}</td>
+                        <td class="py-2 px-3">{{ log.activity_type }}</td>
+                        <td class="py-2 px-3">{{ log.elapsed_time // 60 }} minutes</td>
+                        <td class="py-2 px-3">
+                            {% if log.was_hidden %}
+                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">Hidden from feed</span>
+                            {% else %}
+                            <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-xs">Visible in feed</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-gray-600">No activities have been processed yet. Start recording activities on Strava!</p>
+    {% endif %}
+</div>
+{% endblock %}
