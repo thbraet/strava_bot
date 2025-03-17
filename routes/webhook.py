@@ -9,6 +9,9 @@ def validate():
     mode = request.args.get('hub.mode')
     token = request.args.get('hub.verify_token')
     challenge = request.args.get('hub.challenge')
+
+    print(request.args)
+    print(challenge)
     
     if mode and token:
         if mode == 'subscribe' and token == current_app.config['STRAVA_VERIFICATION_TOKEN']:
