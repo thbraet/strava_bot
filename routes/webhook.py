@@ -19,6 +19,8 @@ def validate():
     
     return 'Verification failed', 403
 
+
+
 @webhook_bp.route('/', methods=['POST'])
 def event():
     """Process incoming webhook events from Strava"""

@@ -1,6 +1,6 @@
 import numpy as np
 import statistics
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 def analyze_heart_rate(hr_data):
     """Analyze heart rate data to determine intensity zones"""
@@ -214,10 +214,19 @@ def generate_workout_title(activity, streams):
     
     return title
 
+def calculate_days_remaining():
+    """Calculate days remaining until July 29th 2026"""
+    target_date = datetime(2026, 7, 29)
+    current_date = datetime.now()
+    days_remaining = (target_date - current_date).days
+    return days_remaining
+
 def generate_title_for_activity(activity, streams):
     """Generate a title for an activity based on its data"""
     try:
-        return generate_workout_title(activity, streams)
+        base_title = generate_workout_title(activity, streams)
+        days_remaining = calculate_days_remaining()
+        return f"{base_title} D-{days_remaining}"
     except Exception as e:
         print(f"Error generating title: {str(e)}")
         return f"{activity.get('type', 'Workout')} {activity.get('distance', 0) / 1000:.1f}km"
